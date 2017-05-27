@@ -70,7 +70,7 @@ you must declare the `READ_LOGS` permission on your manifest. We do **not** reco
 ## Disclaimers
 
 * There is a small possibility that this might stop working on newer Crashlytics SDKs.
-* There is no guarantee that this will work on every device.
+* There is no guarantee that this will work on every device (hint: it doesn't!)
 * This library will not make you toast for breakfast :)
 
 ## Contributing & license
