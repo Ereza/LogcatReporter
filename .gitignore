@@ -1,0 +1,10 @@
+build
+*/build
+*/*.iml
+*.iml
+local.properties
+.idea
+.idea/**
+.gradle
+*.hprof
+/sample/fabric.properties
