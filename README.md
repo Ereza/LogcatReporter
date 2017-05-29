@@ -45,7 +45,7 @@ A new Crashlytics issue should appear, and should show the application log if yo
 
 ### Tracking non-fatal crashes
 
-You can report non-fatal crashes to Crashlytics with the Logcat log attached by using `LogcatReporter.reportExceptionWithLogcat(Throwable)` instead of Crashlytics.logException(Throwable)`.
+You can report non-fatal crashes to Crashlytics with the Logcat log attached by using `LogcatReporter.reportExceptionWithLogcat(Throwable)` instead of `Crashlytics.logException(Throwable)`.
 
 ### Optional: Parameters
 
