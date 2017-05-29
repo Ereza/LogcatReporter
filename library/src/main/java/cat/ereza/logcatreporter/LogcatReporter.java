@@ -30,15 +30,18 @@ public class LogcatReporter {
     private static final int DEFAULT_WAIT_TIME_IN_MILLIS = 500;
     private static final int DEFAULT_LINE_COUNT = 1000;
 
-    public static void install(){
+    private static int lineCount;
+
+    public static void install() {
         install(DEFAULT_LINE_COUNT, DEFAULT_WAIT_TIME_IN_MILLIS);
     }
 
-    public static void install(int lineCount){
+    public static void install(int lineCount) {
         install(lineCount, DEFAULT_WAIT_TIME_IN_MILLIS);
     }
 
     public static void install(final int lineCount, final int waitTimeInMillis) {
+        LogcatReporter.lineCount = lineCount;
         try {
             Runtime.getRuntime().exec("logcat -c");
             Log.i(TAG, "Logs have been cleared.");
@@ -49,19 +52,7 @@ public class LogcatReporter {
         Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
             @Override
             public void uncaughtException(Thread thread, Throwable ex) {
-                //Get the log (try at least)
-                try {
-                    Log.i(TAG, "Crash detected, sending Logcat to Crashlytics!");
-                    Process process = Runtime.getRuntime().exec("logcat -t " + lineCount + " -v threadtime");
-                    BufferedReader bufferedReader = new BufferedReader(
-                            new InputStreamReader(process.getInputStream()));
-                    String line;
-                    while ((line = bufferedReader.readLine()) != null) {
-                        Crashlytics.log("|| " + line);
-                    }
-                } catch (Throwable t) {
-                    Crashlytics.log("(No log available, an error ocurred while getting it)");
-                }
+                logLogcat();
                 try {
                     //Sleep for a moment, try to let the Crashlytics log service catch up...
                     Thread.sleep(waitTimeInMillis);
@@ -73,5 +64,26 @@ public class LogcatReporter {
             }
         });
         Log.i(TAG, "LogcatReporter has been installed");
+    }
+
+    public static void reportExceptionWithLogcat(Throwable t) {
+        logLogcat();
+        Crashlytics.logException(t);
+    }
+
+    private static void logLogcat() {
+        //Get the log (try at least)
+        try {
+            Log.i(TAG, "Crash detected, sending Logcat to Crashlytics!");
+            Process process = Runtime.getRuntime().exec("logcat -t " + lineCount + " -v threadtime");
+            BufferedReader bufferedReader = new BufferedReader(
+                    new InputStreamReader(process.getInputStream()));
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                Crashlytics.log("|| " + line);
+            }
+        } catch (Throwable t) {
+            Crashlytics.log("(No log available, an error ocurred while getting it)");
+        }
     }
 }

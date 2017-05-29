@@ -12,7 +12,7 @@ Also, what about system logs or third-party libraries which you can not change? 
 Add the following dependency to your build.gradle:
 ```gradle
 dependencies {
-    compile 'cat.ereza:logcatreporter:1.0.0'
+    compile 'cat.ereza:logcatreporter:1.1.0'
 }
 ```
 
@@ -42,6 +42,10 @@ throw new RuntimeException("Boom!");
 ```
 
 A new Crashlytics issue should appear, and should show the application log if you go to the issue details.
+
+### Tracking non-fatal crashes
+
+You can report non-fatal crashes to Crashlytics with the Logcat log attached by using `LogcatReporter.reportExceptionWithLogcat(Throwable)` instead of Crashlytics.logException(Throwable)`.
 
 ### Optional: Parameters
 
