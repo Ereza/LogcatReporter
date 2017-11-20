@@ -13,8 +13,8 @@ android {
         applicationId "cat.ereza.logcatreporter.sample"
         minSdkVersion 9
         targetSdkVersion 27
-        versionCode 3
-        versionName "1.2.0"
+        versionCode 4
+        versionName "1.2.1-SNAPSHOT"
     }
     buildTypes {
         debug {
