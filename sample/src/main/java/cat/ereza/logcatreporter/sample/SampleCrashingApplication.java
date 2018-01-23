@@ -17,13 +17,20 @@
 package cat.ereza.logcatreporter.sample;
 
 import android.app.Application;
+import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import cat.ereza.logcatreporter.LogcatReporter;
 import io.fabric.sdk.android.Fabric;
 
 public class SampleCrashingApplication extends Application{
+
+    public static final String TAG = "CLTest";
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -32,10 +39,10 @@ public class SampleCrashingApplication extends Application{
         Fabric.with(this, new Crashlytics());
 
         //Install LogcatReporter
-        LogcatReporter.install();
-
-        //You can algo use the following:
-//        LogcatReporter.install(2000, 500);
-
+        //LogcatReporter.install();
+        //LogcatReporter.install(2000, 500);
+        //You can define some specific TAGs to log, otherwise all logs found will be logged
+        LogcatReporter.install(new ArrayList<>(Arrays.asList( TAG, "ActivityThread" )));
+        Log.i(TAG, "Lc: LogcatReporter.install()");
     }
 }

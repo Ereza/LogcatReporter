@@ -23,9 +23,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
+
 import java.util.UUID;
 
+import cat.ereza.logcatreporter.LogcatReporter;
 import cat.ereza.logcatreporter.sample.R;
+import cat.ereza.logcatreporter.sample.SampleCrashingApplication;
 
 public class MainActivity extends Activity {
 
@@ -41,7 +45,7 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View view) {
                 String loggedString = "This is a test log! - " + UUID.randomUUID().toString();
-                Log.e("TEST_TAG", loggedString);
+                Log.e(SampleCrashingApplication.TAG, loggedString);
                 Toast.makeText(MainActivity.this, getString(R.string.logged_toast, loggedString), Toast.LENGTH_SHORT).show();
             }
         });
@@ -52,5 +56,26 @@ public class MainActivity extends Activity {
                 throw new RuntimeException("Hi! I'm an exception and I made the app crash!");
             }
         });
+
+        logUser();
+    }
+
+    private void logUser() {
+        // You can call any combination of these three methods
+        Crashlytics.setUserIdentifier("678910");
+        Crashlytics.setUserEmail("user10@fabric.io");
+        Crashlytics.setUserName("Test User 10");
+
+        // Or set some key/value manually
+        Crashlytics.setInt("CompanyId", 130);
+
+        Log.i(SampleCrashingApplication.TAG, "Lc: CL settings OK");
+
+        // After submit to crashlytics, strings logged by Crashlytics.log are cleaned.
+        Crashlytics.log("User data saved.");
+        Crashlytics.log("Dados do usuário salvos... 8");
+        LogcatReporter.reportExceptionWithLogcat(new Exception("This is not a crash, only an issue."));
+
+        Log.i(SampleCrashingApplication.TAG, "Lc: CL log OK");
     }
 }
