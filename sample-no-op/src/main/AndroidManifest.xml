@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="cat.ereza.logcatreporter.sample">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <!-- Use this if you really want to get logs from devices on API <16 -->
+    <!--<uses-permission android:name="android.permission.READ_LOGS" android:maxSdkVersion="18" />-->
+
+    <application
+        android:name="cat.ereza.logcatreporter.sample.SampleCrashingApplication"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/SampleAppTheme"
+        tools:ignore="AllowBackup,GoogleAppIndexingWarning">
+        <activity
+            android:name="cat.ereza.logcatreporter.sample.activity.MainActivity"
+            android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="4243bc7bde69a144d20e9aa89b0f3be8d00bfd06" />
+    </application>
+</manifest>

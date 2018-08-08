@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">LogcatReporter sample</string>
+    <string name="hello">Hello! Press the following buttons to perform the desired actions:</string>
+    <string name="button_log">Write to log</string>
+    <string name="button_crash">Crash app</string>
+    <string name="logged_toast">Logged this string: %s</string>
+</resources>
