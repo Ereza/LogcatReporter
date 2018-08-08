@@ -29,8 +29,8 @@ android {
 }
 
 dependencies {
-    compile project(":library")
-    compile('com.crashlytics.sdk.android:crashlytics:2.7.1@aar') {
+    implementation project(":library")
+    implementation('com.crashlytics.sdk.android:crashlytics:2.7.1@aar') {
         transitive = true;
     }
 }
