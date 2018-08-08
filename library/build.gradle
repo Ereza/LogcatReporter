@@ -1,14 +1,14 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 27
-    buildToolsVersion "27.0.1"
+    compileSdkVersion 28
+    buildToolsVersion "28.0.1"
 
     defaultConfig {
         minSdkVersion 9
         targetSdkVersion 27
-        versionCode 4
-        versionName "1.2.1-SNAPSHOT"
+        versionCode 5
+        versionName "1.2.2-SNAPSHOT"
     }
     buildTypes {
         release {
@@ -20,7 +20,7 @@ android {
 apply from: 'https://raw.github.com/chrisbanes/gradle-mvn-push/master/gradle-mvn-push.gradle'
 
 dependencies {
-    compile('com.crashlytics.sdk.android:crashlytics:2.7.1@aar') {
+    compile('com.crashlytics.sdk.android:crashlytics:2.9.3@aar') {
         transitive = true
     }
 }
