@@ -7,7 +7,7 @@ repositories {
 
 android {
     compileSdkVersion 27
-    buildToolsVersion "27.0.1"
+    buildToolsVersion '28.0.0'
 
     defaultConfig {
         applicationId "cat.ereza.logcatreporter.sample"
@@ -30,7 +30,7 @@ android {
 
 dependencies {
     implementation project(":library")
-    implementation('com.crashlytics.sdk.android:crashlytics:2.7.1@aar') {
+    implementation('com.crashlytics.sdk.android:crashlytics:2.9.3@aar') {
         transitive = true;
     }
 }
