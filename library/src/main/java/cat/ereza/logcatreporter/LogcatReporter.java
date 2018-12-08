@@ -16,46 +16,85 @@
 
 package cat.ereza.logcatreporter;
 
+import android.text.TextUtils;
 import android.util.Log;
-
 import com.crashlytics.android.Crashlytics;
-
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 
 public class LogcatReporter {
 
-    private static final String TAG = "LogcatReporter";
+    public static final String TAG = "LogcatReporter";
 
-    private static final int DEFAULT_WAIT_TIME_IN_MILLIS = 500;
-    private static final int DEFAULT_LINE_COUNT = 1000;
+    private static final int DEFAULT_WAIT_TIME_IN_MILLIS = 1500;
+    private static final int DEFAULT_LINE_COUNT = 1500;
+
+    private static String packageName;
+    private static ArrayList<String> tags;
 
     private static int lineCount;
+    private static int waitTimeInMillis;
 
     public static void install() {
-        install(DEFAULT_LINE_COUNT, DEFAULT_WAIT_TIME_IN_MILLIS);
+        install(DEFAULT_LINE_COUNT, DEFAULT_WAIT_TIME_IN_MILLIS, null, null);
+    }
+
+    public static void install(String packageName) {
+        install(DEFAULT_LINE_COUNT, DEFAULT_WAIT_TIME_IN_MILLIS, null, packageName);
+    }
+
+    public static void install(ArrayList<String> tags) {
+        install(DEFAULT_LINE_COUNT, DEFAULT_WAIT_TIME_IN_MILLIS, tags, null);
+    }
+
+    public static void install(ArrayList<String> tags, String packageName) {
+        install(DEFAULT_LINE_COUNT, DEFAULT_WAIT_TIME_IN_MILLIS, tags, packageName);
     }
 
     public static void install(int lineCount) {
-        install(lineCount, DEFAULT_WAIT_TIME_IN_MILLIS);
+        install(lineCount, DEFAULT_WAIT_TIME_IN_MILLIS, null, null);
     }
 
-    public static void install(final int lineCount, final int waitTimeInMillis) {
-        LogcatReporter.lineCount = lineCount;
-        try {
-            Runtime.getRuntime().exec("logcat -c");
-            Log.i(TAG, "Logs have been cleared.");
-        } catch (Throwable t) {
-            Log.e(TAG, "Could not clear logs, in case of crash, the logs may contain more info from past executions.");
+    public static void install(int lineCount, String packageName) {
+        install(lineCount, DEFAULT_WAIT_TIME_IN_MILLIS, null, packageName);
+    }
+
+    public static void install(int lineCount, ArrayList<String> tags) {
+        install(lineCount, DEFAULT_WAIT_TIME_IN_MILLIS, tags, null);
+    }
+
+    public static void install(int lineCount, ArrayList<String> tags, String packageName) {
+        install(lineCount, DEFAULT_WAIT_TIME_IN_MILLIS, tags, packageName);
+    }
+
+    public static void install(int lineCount, int waitTimeInMillis, ArrayList<String> tags, String packageName) {
+
+        LogcatReporter.packageName = packageName;
+        LogcatReporter.tags = tags;
+
+        if(tags != null && tags.size() > 0) {
+            tags.add(TAG);
+            tags.add("AndroidRuntime");
+            tags.add("ActivityThread");
         }
+
+        LogcatReporter.lineCount = lineCount;
+        LogcatReporter.waitTimeInMillis = waitTimeInMillis;
+
+        //clearLogCat();
+
         final Thread.UncaughtExceptionHandler originalHandler = Thread.getDefaultUncaughtExceptionHandler();
+
         Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
             @Override
             public void uncaughtException(Thread thread, Throwable ex) {
+                Log.i(TAG, "Crash detected, sending Logcat to Crashlytics!");
+                Log.e(TAG, "UncaughtException detected.", ex);
                 logLogcat();
                 try {
                     //Sleep for a moment, try to let the Crashlytics log service catch up...
-                    Thread.sleep(waitTimeInMillis);
+                    Thread.sleep(LogcatReporter.waitTimeInMillis);
                 } catch (Throwable t) {
                     Log.e(TAG, "The reporting thread was interrupted, the log may be incomplete!");
                 }
@@ -63,7 +102,17 @@ public class LogcatReporter {
                 originalHandler.uncaughtException(thread, ex);
             }
         });
+
         Log.i(TAG, "LogcatReporter has been installed");
+    }
+
+    public static void clearLogCat() {
+        try {
+            Runtime.getRuntime().exec("logcat -c");
+            Log.i(TAG, "Logs have been cleared.");
+        } catch (Throwable t) {
+            Log.e(TAG, "Could not clear logs, in case of crash, the logs may contain more info from past executions.");
+        }
     }
 
     public static void reportExceptionWithLogcat(Throwable t) {
@@ -74,16 +123,30 @@ public class LogcatReporter {
     private static void logLogcat() {
         //Get the log (try at least)
         try {
-            Log.i(TAG, "Crash detected, sending Logcat to Crashlytics!");
-            Process process = Runtime.getRuntime().exec("logcat -t " + lineCount + " -v threadtime");
-            BufferedReader bufferedReader = new BufferedReader(
-                    new InputStreamReader(process.getInputStream()));
+
+            String command = "logcat -t " + lineCount + " -v threadtime";
+            String regexTags = "";
+
+            if(tags != null && tags.size() > 0) {
+                //regexTags += " | grep -o -P '";
+                for (int i = 0; i < tags.size(); i++) {
+                    regexTags += ".*" + tags.get(i) + "[\\s]*:.*|";
+                }
+
+                regexTags = regexTags.substring(0, regexTags.length()-1);
+                //regexTags += "'";
+            }
+
+            Process process = Runtime.getRuntime().exec(command);
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             String line;
             while ((line = bufferedReader.readLine()) != null) {
-                Crashlytics.log("|| " + line);
+                if(regexTags== "" || line.startsWith("-") || ( !TextUtils.isEmpty(packageName) && line.contains(packageName) ) || line.matches(regexTags))
+                    Crashlytics.log("|| " + line);
             }
         } catch (Throwable t) {
-            Crashlytics.log("(No log available, an error ocurred while getting it)");
+            Crashlytics.log("(No log available, an error occurred while getting it)");
         }
     }
 }
+
