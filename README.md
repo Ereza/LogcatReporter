@@ -12,7 +12,7 @@ Also, what about system logs or third-party libraries which you can not change? 
 Add the following dependency to your build.gradle:
 ```gradle
 dependencies {
-    compile 'cat.ereza:logcatreporter:1.2.0'
+    compile 'cat.ereza:logcatreporter:1.3.0'
 }
 ```
 
