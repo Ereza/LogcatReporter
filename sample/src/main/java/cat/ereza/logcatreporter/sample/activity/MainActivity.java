@@ -34,8 +34,8 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Button logButton = (Button) findViewById(R.id.button_log);
-        Button crashButton = (Button) findViewById(R.id.button_crash);
+        Button logButton = findViewById(R.id.button_log);
+        Button crashButton = findViewById(R.id.button_crash);
 
         logButton.setOnClickListener(new View.OnClickListener() {
             @Override

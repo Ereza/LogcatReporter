@@ -18,6 +18,8 @@ package cat.ereza.logcatreporter;
 
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import com.crashlytics.android.Crashlytics;
 
 import java.io.BufferedReader;
@@ -51,7 +53,7 @@ public class LogcatReporter {
         final Thread.UncaughtExceptionHandler originalHandler = Thread.getDefaultUncaughtExceptionHandler();
         Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
             @Override
-            public void uncaughtException(Thread thread, Throwable ex) {
+            public void uncaughtException(@NonNull Thread thread, @NonNull Throwable ex) {
                 logLogcat();
                 try {
                     //Sleep for a moment, try to let the Crashlytics log service catch up...
@@ -60,7 +62,9 @@ public class LogcatReporter {
                     Log.e(TAG, "The reporting thread was interrupted, the log may be incomplete!");
                 }
                 //Let Crashlytics handle everything
-                originalHandler.uncaughtException(thread, ex);
+                if (originalHandler != null) {
+                    originalHandler.uncaughtException(thread, ex);
+                }
             }
         });
         Log.i(TAG, "LogcatReporter has been installed");
