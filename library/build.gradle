@@ -17,7 +17,13 @@ android {
     }
 }
 
-apply from: 'https://raw.github.com/chrisbanes/gradle-mvn-push/master/gradle-mvn-push.gradle'
+ext {
+    PUBLISH_GROUP_ID = 'cat.ereza'
+    PUBLISH_ARTIFACT_ID = 'logcatreporter'
+    PUBLISH_VERSION = android.defaultConfig.versionName
+}
+
+apply from: "publish-mavencentral.gradle"
 
 dependencies {
     api 'com.crashlytics.sdk.android:crashlytics:2.10.1'
