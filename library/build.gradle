@@ -34,7 +34,7 @@ android {
 ext {
     PUBLISH_GROUP_ID = 'cat.ereza'
     PUBLISH_ARTIFACT_ID = 'logcatreporter'
-    PUBLISH_VERSION = '1.4.0'
+    PUBLISH_VERSION = '1.4.1-SNAPSHOT'
 }
 
 apply from: "publish-mavencentral.gradle"
