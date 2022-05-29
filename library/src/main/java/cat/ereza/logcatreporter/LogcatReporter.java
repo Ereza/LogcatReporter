@@ -18,9 +18,7 @@ package cat.ereza.logcatreporter;
 
 import android.util.Log;
 
-import androidx.annotation.NonNull;
-
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -51,20 +49,17 @@ public class LogcatReporter {
             Log.e(TAG, "Could not clear logs, in case of crash, the logs may contain more info from past executions.");
         }
         final Thread.UncaughtExceptionHandler originalHandler = Thread.getDefaultUncaughtExceptionHandler();
-        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
-            @Override
-            public void uncaughtException(@NonNull Thread thread, @NonNull Throwable ex) {
-                logLogcat();
-                try {
-                    //Sleep for a moment, try to let the Crashlytics log service catch up...
-                    Thread.sleep(waitTimeInMillis);
-                } catch (Throwable t) {
-                    Log.e(TAG, "The reporting thread was interrupted, the log may be incomplete!");
-                }
-                //Let Crashlytics handle everything
-                if (originalHandler != null) {
-                    originalHandler.uncaughtException(thread, ex);
-                }
+        Thread.setDefaultUncaughtExceptionHandler((thread, ex) -> {
+            logLogcat();
+            try {
+                //Sleep for a moment, try to let the Crashlytics log service catch up...
+                Thread.sleep(waitTimeInMillis);
+            } catch (Throwable t) {
+                Log.e(TAG, "The reporting thread was interrupted, the log may be incomplete!");
+            }
+            //Let Crashlytics handle everything
+            if (originalHandler != null) {
+                originalHandler.uncaughtException(thread, ex);
             }
         });
         Log.i(TAG, "LogcatReporter has been installed");
@@ -72,7 +67,7 @@ public class LogcatReporter {
 
     public static void reportExceptionWithLogcat(Throwable t) {
         logLogcat();
-        Crashlytics.logException(t);
+        FirebaseCrashlytics.getInstance().recordException(t);
     }
 
     private static void logLogcat() {
@@ -84,10 +79,10 @@ public class LogcatReporter {
                     new InputStreamReader(process.getInputStream()));
             String line;
             while ((line = bufferedReader.readLine()) != null) {
-                Crashlytics.log("|| " + line);
+                FirebaseCrashlytics.getInstance().log("|| " + line);
             }
         } catch (Throwable t) {
-            Crashlytics.log("(No log available, an error ocurred while getting it)");
+            FirebaseCrashlytics.getInstance().log("(No log available, an error ocurred while getting it)");
         }
     }
 }

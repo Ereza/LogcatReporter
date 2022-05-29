@@ -1,8 +1,8 @@
 # LogcatReporter library
 
-This library sends the Logcat log to Crashlytics when your app crashes. Having more information about a crash is never a bad thing, right?
+This library sends the Logcat log to Fabric Crashlytics when your app crashes. Having more information about a crash is never a bad thing, right?
 
-Yes, you could change all your `Log.x()` commands to `Crashlytics.log()`, but that's a waste of time.
+Yes, you could change all your `Log.x()` commands to `FirebaseCrashlytics.getInstance().log()`, but that's a waste of time.
 Also, what about system logs or third-party libraries which you can not change? This library fixes this problem.
 
 ## How to use
@@ -12,7 +12,7 @@ Also, what about system logs or third-party libraries which you can not change? 
 Add the following dependency to your build.gradle:
 ```gradle
 dependencies {
-    compile 'cat.ereza:logcatreporter:1.3.0'
+    compile 'cat.ereza:logcatreporter:1.4.0'
 }
 ```
 
@@ -24,15 +24,12 @@ On your application class, use this snippet:
     public void onCreate() {
         super.onCreate();
 
-        //Initialize Crashlytics as normal (you probably already have this code)
-        Fabric.with(this, new Crashlytics());
-
         //Initialize the LogcatReporter
         LogcatReporter.install();
     }
 ```
 
-**WARNING!** You **MUST** install LogcatReporter **AFTER** initializing Crashlytics. If you don't, it will not work.
+If you are using any `UncaughtExceptionHandler`, please ensure that is is initialized **before** installing LogcatReporter.
 
 ### 3. Test it
 
@@ -45,7 +42,7 @@ A new Crashlytics issue should appear, and should show the application log if yo
 
 ### Tracking non-fatal crashes
 
-You can report non-fatal crashes to Crashlytics with the Logcat log attached by using `LogcatReporter.reportExceptionWithLogcat(Throwable)` instead of `Crashlytics.logException(Throwable)`.
+You can report non-fatal crashes to Firebar Crashlytics with the Logcat log attached by using `LogcatReporter.reportExceptionWithLogcat(Throwable)` instead of `Crashlytics.logException(Throwable)`.
 
 ### Optional: Parameters
 
@@ -63,17 +60,12 @@ This library relies on the `Thread.setDefaultUncaughtExceptionHandler` method.
 When an exception is caught by the library's `UncaughtExceptionHandler` it does the following:
 
 1. Read the Logcat for the application
-2. Log it to Crashlytics via `Crashlytics.log()`
-3. Execute the next `UncaughtExceptionHandler` in the chain (normally the one from Crashlytics)
-
-## Incompatibilities
-
-On API<16, you will get no logs reported by default. If you really want to report logs from those devices,
-you must declare the `READ_LOGS` permission on your manifest. We do **not** recommend enabling this since it can expose user private information or data from other apps.
+2. Log it to Firebase Crashlytics via `FirebaseCrashlytics.getInstance().log()`
+3. Execute the next `UncaughtExceptionHandler` in the chain (normally the one from Firebase Crashlytics)
 
 ## Disclaimers
 
-* There is a small possibility that this might stop working on newer Crashlytics SDKs.
+* There is a small possibility that this might stop working on newer Firebase Crashlytics SDKs.
 * There is no guarantee that this will work on every device (hint: it doesn't!)
 * This library will not make you toast for breakfast :)
 

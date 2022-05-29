@@ -18,18 +18,12 @@ package cat.ereza.logcatreporter.sample;
 
 import android.app.Application;
 
-import com.crashlytics.android.Crashlytics;
-
 import cat.ereza.logcatreporter.LogcatReporter;
-import io.fabric.sdk.android.Fabric;
 
-public class SampleCrashingApplication extends Application{
+public class SampleCrashingApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-
-        //Initialize Crashlytics as normal
-        Fabric.with(this, new Crashlytics());
 
         //Install LogcatReporter
         LogcatReporter.install();

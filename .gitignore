@@ -7,4 +7,4 @@ local.properties
 .idea/**
 .gradle
 *.hprof
-/sample/fabric.properties
+/sample/google-services.json

@@ -19,7 +19,6 @@ package cat.ereza.logcatreporter.sample.activity;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -37,20 +36,14 @@ public class MainActivity extends Activity {
         Button logButton = findViewById(R.id.button_log);
         Button crashButton = findViewById(R.id.button_crash);
 
-        logButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String loggedString = "This is a test log! - " + UUID.randomUUID().toString();
-                Log.e("TEST_TAG", loggedString);
-                Toast.makeText(MainActivity.this, getString(R.string.logged_toast, loggedString), Toast.LENGTH_SHORT).show();
-            }
+        logButton.setOnClickListener(view -> {
+            String loggedString = "This is a test log! - " + UUID.randomUUID().toString();
+            Log.e("TEST_TAG", loggedString);
+            Toast.makeText(MainActivity.this, getString(R.string.logged_toast, loggedString), Toast.LENGTH_SHORT).show();
         });
 
-        crashButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                throw new RuntimeException("Hi! I'm an exception and I made the app crash!");
-            }
+        crashButton.setOnClickListener(view -> {
+            throw new RuntimeException("Hi! I'm an exception and I made the app crash!");
         });
     }
 }
